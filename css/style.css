@@ -185,6 +185,8 @@ section { padding: 72px 0 24px; }
 
 .authors { font-size: 1.12rem; margin-bottom: 4px; }
 .authors .author { color: var(--ink); font-weight: 550; }
+.authors a.author { text-decoration: underline; text-decoration-color: var(--p-lav); text-decoration-thickness: 2px; text-underline-offset: 4px; transition: color .15s, text-decoration-color .15s; }
+.authors a.author:hover { color: var(--magenta); text-decoration-color: var(--magenta); }
 .authors sup { color: var(--ink-3); font-weight: 500; }
 .affils { color: var(--ink-3); font-size: .95rem; margin-bottom: 26px; }
 
