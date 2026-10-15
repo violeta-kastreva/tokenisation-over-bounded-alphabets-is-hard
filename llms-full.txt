@@ -1,0 +1,102 @@
+# Tokenisation over Bounded Alphabets is Hard
+
+> ICLR 2026. We analyse tokenisation over bounded alphabets and show that finding a compression-optimal tokeniser is NP-complete and APX-hard over binary alphabets (direct and bottom-up), and strongly NP-complete over unary alphabets (direct).
+
+- Authors: Violeta Kastreva*, Philip Whittington*, Dennis Komm, Tiago Pimentel (*equal contribution)
+- Affiliations: ETH Zürich; Sofia University "St. Kliment Ohridski"
+- Paper: https://openreview.net/forum?id=Xhf9YqwlM4 (PDF: https://openreview.net/pdf?id=Xhf9YqwlM4)
+- Poster: assets/poster.pdf
+
+This file summarises the paper for AI agents and tools. For exact statements and full proofs, read and cite the paper.
+
+## Motivation
+
+- Tokenisers map character-strings to subword-strings; language models consume the subwords.
+- Downstream model performance is not practical to optimise directly, so tokenisers are chosen by proxy objectives. We focus on compression, which correlates with downstream performance and determines training and inference cost.
+- Prior work (Kozma and Voderholzer, 2024; Whittington et al., 2025; Lim et al., 2025) proved tokenisation NP-complete, but only over unboundedly large alphabets. Practical tokenisers use fixed alphabets: Unicode (about 170,000 characters), bytes (256) or bits (2). We close this gap.
+
+## Setup and notation
+
+The paper colour-codes notation: blue for raw data (characters c in Sigma*), magenta for tokeniser data (subwords s, merges m), orange for functions (tok, merge, G).
+
+- Alphabet Sigma with |Sigma| = n (the n-ary case). Dataset D is a multiset of character-strings.
+- Vocabulary S, a finite subset of Sigma+, containing Sigma, with |S| = |Sigma| + K.
+- Direct tokenisation tok_direct[S](c) = argmin over subword-strings s in S* of |s|, subject to concat(s) = c. Computable in O(|c|^2) as a shortest path.
+- Bottom-up tokenisation tok_up[m](c): apply the merges m_1, ..., m_K in order; each merge replaces every adjacent pair (s1, s2), scanning left to right, by the token s1 s2. BPE picks merges greedily by pair frequency.
+- Optimal pair encoding (OPE): the merges only define a vocabulary S_m, which is then applied optimally (direct encoding).
+- Compressed length: G_l(tok, D) = sum over c in D of |tok(c)|.
+- Compression reduction: G_r(tok, D) = sum over c in D of (|c| - |tok(c)|). Both rank tokenisers identically, but approximation ratios differ: with 1,000 characters, optimum 100 symbols and a heuristic reaching 200, the ratio is 2 under G_l but 1.125 under G_r. We argue G_l is the natural objective because it is the sequence length a model pays for.
+- n-ary tokenisation decision problem: given D over an n-ary alphabet, budget K and target delta, is there a tokeniser (vocabulary or merge sequence of size K) with G_l <= delta? The optimisation problem asks for the minimum.
+- Fact 1: an n-ary instance is also a valid n'-ary instance for n' > n, so hardness propagates to larger alphabets (for unary, this requires strong NP-hardness).
+
+## Results
+
+| Variant | Unary (n = 1) | Binary (n = 2) | Bounded n >= 3 | Unbounded |
+|---|---|---|---|---|
+| Direct | strongly NP-complete (new) | NP-complete, APX-hard, no ratio < 1.000002 (new) | APX-hard (follows) | NP-complete (prior work) |
+| Bottom-up | open | NP-complete, APX-hard, no ratio < 1.0000001 (new) | APX-hard (follows) | NP-complete (prior work) |
+| OPE | at least weakly NP-complete (new) | not studied | not studied | analysed by Kozma and Voderholzer (2024) |
+
+- Theorem 1: binary direct tokenisation (decision) is NP-complete.
+- Theorem 2: binary direct tokenisation (optimisation) is APX-hard and cannot be approximated in polynomial time with ratio below 446213/446212 > 1.000002, unless P = NP.
+- Theorem 3: binary bottom-up tokenisation (decision) is NP-complete.
+- Theorem 4: binary bottom-up tokenisation (optimisation) is APX-hard and cannot be approximated in polynomial time with ratio below 7258949/7258948 > 1.0000001, unless P = NP.
+- Theorem 5: unary direct tokenisation (decision) is strongly NP-complete. Corollary: the general optimal coin denomination problem is strongly NP-complete (applying a unary vocabulary is the change-making problem).
+- Theorem 6: unary OPE (decision) is at least weakly NP-complete.
+
+The explicit constants come from the 3-OCC-MAX2SAT gap of Berman and Karpinski and are not optimised. Whether the binary problems admit any constant-factor approximation (lie in APX) is open.
+
+## Reduction 1: 3-OCC-MAX2SAT to binary direct tokenisation
+
+Source problem 3-OCC-MAX2SAT: Boolean variables X_1..X_J, I clauses of two literals (L_i^1 or L_i^2), every variable occurring in exactly three clauses (so 2I = 3J), target gamma. Question: can at least gamma clauses be satisfied? It is APX-hard (Berman and Karpinski, 1999).
+
+Encoding over Sigma = {0, 1}: x_j^T = 0^(2j-1) and x_j^F = 0^(2j). Subdatasets (with multiplicities):
+
+- D1 = {1 x_j^T, x_j^T 1, 1 x_j^F, x_j^F 1} for all j, each repeated 63 times
+- D2 = {1 x_j^T 1, 1 x_j^F 1} for all j, each repeated 21 times
+- D3 = {1 x_j^T 1 x_j^F 1} for all j, each repeated 7 times
+- D4 = {1 L_i^1 1 L_i^2 1} for each clause i, once (literals replaced by their encodings)
+
+Budget K = 5J, target delta = 329J + 3I - gamma.
+
+Proof idea: the multiplicities force every optimal tokeniser to be sat-compliant: it contains 1x_j^T, x_j^T1, 1x_j^F, x_j^F1 for every j, plus exactly one of 1x_j^T1 or 1x_j^F1 per variable, which encodes its truth value. Then D1, D2, D3 compress to 252J, 63J and 14J symbols, and each clause-string in D4 compresses to 2 symbols if its clause is satisfied and 3 otherwise. Total: 329J + 3I - (number of satisfied clauses).
+
+APX-hardness: an L-reduction with alpha = 444 and beta = 1. Any tokeniser can be made sat-compliant by cost-nonincreasing token swaps, and its assignment is read off. Gap: with I = 2016n clauses it is NP-hard to distinguish at least (2012 - eps)n from at most (2011 + eps)n satisfiable clauses; through the reduction this gives the ratio 446213/446212.
+
+## Reduction 2: 3-OCC-MAX2SAT to binary bottom-up tokenisation
+
+Same encoding, five subdatasets with multiplicities 575, 115, 23, 4 and 1 (each dominating all below it), budget K = 10J, target delta = 5398J + 575 + 3I - gamma. The forward merge sequence has six phases: four structural phases (including 2J - 1 merges that build every 0^j, which is shown to be the exact minimum) and two assignment-dependent phases with one merge per variable. Key step: for these instances every sat-compliant direct tokeniser can be realised by a merge sequence with the same compression, so the direct analysis carries over. L-reduction constants alpha = 7778, beta = 1; inapproximability ratio 7258949/7258948.
+
+## Reduction 3: vertex cover to unary direct tokenisation
+
+Source problem vertex cover: graph with vertices v_1..v_J and I edges, budget psi. Question: is there a set of at most psi vertices touching every edge? NP-complete (Karp, 1972).
+
+Over Sigma = {a}, a string is identified with its length. Let N = (J + I + 1)^4, enc(v_j) = j + j^2 N + j^3 N^2, and B = N^4. Dataset:
+
+- vertex-strings: a^enc(v_j) for every vertex, plus a^B
+- cover-strings: a^(enc(v_j) + B) for every vertex
+- edge-strings: a^(enc(u) + enc(v) + B) for every edge (u, v)
+
+Budget K = J + 1 + psi, target delta = 3J + 2I + 1 - psi. Written in base N, these lengths have independent digits, so all strings are distinct and no unintended sums collide. An optimal tokeniser keeps all vertex-strings and B as tokens and spends psi tokens on cover-strings; an edge-string then costs 2 tokens exactly when one of its endpoints' cover-strings is a token (the edge is covered), and 3 otherwise. Because all lengths are polynomial in the graph size, the strings can be written out explicitly, giving strong NP-hardness.
+
+## Unary OPE and addition chains
+
+Addition chain problem: given targets t_1..t_J and a length zeta, is there a sequence starting at 1 in which each element is the sum of two earlier ones, containing every target, with at most zeta steps? NP-complete with binary-encoded numbers (Downey, Leong and Sethi, 1981). With D = {a^t_1, ..., a^t_J}, K = zeta and delta = J, a unary OPE tokeniser meets delta exactly when every target becomes a single token, which is exactly an addition chain. Example: targets {5, 7, 12} via the chain 1, 2, 3, 5, 7, 12 (five merges).
+
+## Takeaways and open questions
+
+- The hardness of tokenisation is inherent, not an artifact of large alphabets.
+- For binary alphabets, no polynomial-time algorithm approximates the optimum arbitrarily well unless P = NP. This explains why BPE and UnigramLM are heuristics, and points to provably good approximation algorithms as the way forward.
+- Open: is binary tokenisation in APX? What compression can efficient algorithms guarantee? Do properties of natural language make practical instances easier? How hard are other objectives and variants, and unary bottom-up tokenisation?
+
+## Citation
+
+```bibtex
+@inproceedings{kastreva2026tokenisation,
+  title     = {Tokenisation over Bounded Alphabets is Hard},
+  author    = {Kastreva, Violeta and Whittington, Philip and Komm, Dennis and Pimentel, Tiago},
+  booktitle = {The Fourteenth International Conference on Learning Representations},
+  year      = {2026},
+  url       = {https://openreview.net/forum?id=Xhf9YqwlM4}
+}
+```

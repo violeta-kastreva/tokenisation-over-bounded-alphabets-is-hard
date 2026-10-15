@@ -1,0 +1,37 @@
+# Tokenisation over Bounded Alphabets is Hard
+
+> ICLR 2026. Finding a compression-optimal tokeniser is NP-complete and APX-hard already over binary alphabets, for both direct (vocabulary) and bottom-up (merge-sequence, BPE-style) tokenisation. Direct tokenisation stays strongly NP-complete even over a unary (single-symbol) alphabet. The intractability of tokenisation is therefore not an artifact of large alphabets.
+
+Authors: Violeta Kastreva*, Philip Whittington*, Dennis Komm, Tiago Pimentel (*equal contribution). ETH Zürich and Sofia University "St. Kliment Ohridski".
+
+Key facts:
+
+- Objective: compressed length G_l(tok, D) = sum over strings c in D of |tok(c)|, the number of tokens left after tokenising the dataset D with a vocabulary budget of K tokens beyond the alphabet.
+- Direct tokenisation: choose a vocabulary S (|S| = |Sigma| + K) applied optimally (shortest segmentation). Bottom-up tokenisation: choose K merges applied in order, as in BPE.
+- Binary alphabet: both variants are NP-complete and APX-hard (no PTAS unless P = NP). No polynomial-time algorithm achieves approximation ratio below 446213/446212 (about 1.000002) for direct, or below 7258949/7258948 (about 1.0000001) for bottom-up, unless P = NP. These constants are not optimised; the point is that no PTAS exists.
+- Unary alphabet: direct tokenisation is strongly NP-complete (reduction from vertex cover). Corollary: choosing optimal coin denominations for a set of transactions is strongly NP-complete. Unary optimal pair encoding (OPE) is at least weakly NP-complete (reduction from addition chains). Unary bottom-up tokenisation is open.
+- Hardness for an n-ary alphabet implies hardness for every larger alphabet (bytes, Unicode), so results for n = 1 and n = 2 are the strongest.
+- Binary hardness uses reductions from 3-OCC-MAX2SAT (max-2-SAT where every variable occurs exactly three times), which is APX-hard (Berman and Karpinski, 1999).
+- Open questions: whether binary tokenisation admits any constant-factor approximation (is it in APX), what compression efficient algorithms can guarantee, whether natural language makes instances easier, and the hardness of other objectives.
+
+## Paper
+
+- [OpenReview forum](https://openreview.net/forum?id=Xhf9YqwlM4): reviews and discussion
+- [Paper PDF](https://openreview.net/pdf?id=Xhf9YqwlM4): full paper with proofs
+- [Poster PDF](assets/poster.pdf): ICLR 2026 poster
+
+## More detail
+
+- [llms-full.txt](llms-full.txt): definitions, all three reductions with their parameters, theorems and citation
+
+## Citation
+
+```bibtex
+@inproceedings{kastreva2026tokenisation,
+  title     = {Tokenisation over Bounded Alphabets is Hard},
+  author    = {Kastreva, Violeta and Whittington, Philip and Komm, Dennis and Pimentel, Tiago},
+  booktitle = {The Fourteenth International Conference on Learning Representations},
+  year      = {2026},
+  url       = {https://openreview.net/forum?id=Xhf9YqwlM4}
+}
+```
