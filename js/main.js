@@ -13,7 +13,8 @@
     "\\tk": "\\textcolor{DC267F}{#1}",
     "\\fn": "\\textcolor{FE6100}{#1}",
     "\\tok": "\\fn{\\mathtt{tok}}",
-    "\\tokd": "\\fn{\\mathtt{tok}_{\\text{☞}}}",
+    // wasysym's \pointer: a hollow right arrow (U+21E8), as in the paper
+    "\\tokd": "\\fn{\\mathtt{tok}_{\\text{⇨}}}",
     "\\toku": "\\fn{\\mathtt{tok}_{\\uparrow}}",
     "\\Sig": "\\cc{\\Sigma}",
     "\\chars": "\\cc{\\mathbf{c}}",
@@ -409,7 +410,7 @@
     occ3: { J: 4, clauses: [[1, 3], [-1, 3], [2, 4], [2, -4], [-2, -3], [1, -4]] }
   };
   const F1 = 63, F2 = 21, F3 = 7;
-  const sat = { preset: "poster", J: 2, clauses: [], assign: [], vocab: [] };
+  const sat = { preset: "poster", J: 2, clauses: [], assign: [], vocab: [], openDs: new Set() };
   const zT = j => "0".repeat(2 * j - 1);
   const zF = j => "0".repeat(2 * j);
   const litStr = l => (l > 0 ? zT(l) : zF(-l));
@@ -501,9 +502,16 @@
         }
       });
       total += sub;
-      html += `<div class="subd"><div class="subd-head"><span class="nm">${T(d.name)}</span><span class="mult">×${d.mult}</span><span class="role">${d.role}</span><span class="len">${T(`\\G_\\ell = ${sub}`)}</span></div><div class="subd-body">${body}</div></div>`;
+      const head = `<span class="nm">${T(d.name)}</span><span class="mult">×${d.mult}</span><span class="role">${d.role}</span><span class="len">${T(`\\G_\\ell = ${sub}`)}</span>`;
+      // D1-D3 only fix the "sat-compliant" tokens, so they start folded; D4 (the clauses) stays visible
+      html += d.clause
+        ? `<div class="subd"><div class="subd-head">${head}</div><div class="subd-body">${body}</div></div>`
+        : `<details class="subd" data-ds="${d.name}"${sat.openDs.has(d.name) ? " open" : ""}><summary class="subd-head">${head}</summary><div class="subd-body">${body}</div></details>`;
     });
     $("satData").innerHTML = html;
+    $("satData").querySelectorAll("details.subd").forEach(el => el.addEventListener("toggle", () => {
+      el.open ? sat.openDs.add(el.dataset.ds) : sat.openDs.delete(el.dataset.ds);
+    }));
     // totals
     const g = nSat(sat.assign), opt = optimum().best;
     const formula = 329 * J + 3 * I - g, best = 329 * J + 3 * I - opt;

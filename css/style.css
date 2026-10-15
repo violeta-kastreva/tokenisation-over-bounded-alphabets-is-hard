@@ -734,3 +734,11 @@ footer .llms { margin: 6px 0 0; font-size: .85rem; }
 .title-tokens.split { row-gap: 28px; }
 .title-tokens .t::after { white-space: pre; }
 @media (max-width: 520px) { .graph .elab { display: none; } .graph .vtag { font-size: 17px; } }
+
+/* folded subdatasets in the binary demo */
+details.subd > summary.subd-head { cursor: pointer; list-style: none; border-bottom: 0; }
+details.subd > summary.subd-head::-webkit-details-marker { display: none; }
+details.subd > summary.subd-head::before { content: "▸"; color: var(--magenta); font-size: .9rem; transition: transform .2s; }
+details.subd[open] > summary.subd-head::before { transform: rotate(90deg); }
+details.subd[open] > summary.subd-head { border-bottom: 1.5px solid var(--line-soft); }
+details.subd > summary.subd-head:hover { background: #F1EFF8; }
