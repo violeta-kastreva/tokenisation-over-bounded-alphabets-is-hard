@@ -8,6 +8,7 @@ Key facts:
 
 - Objective: compressed length G_l(tok, D) = sum over strings c in D of |tok(c)|, the number of tokens left after tokenising the dataset D with a vocabulary budget of K tokens beyond the alphabet.
 - Direct tokenisation: choose a vocabulary S (|S| = |Sigma| + K) applied optimally (shortest segmentation). Bottom-up tokenisation: choose K merges applied in order, as in BPE.
+- Approximation ratio rho = (compressed length achieved by an algorithm) / (optimal compressed length), so rho >= 1 and rho = 1 is optimal.
 - Binary alphabet: both variants are NP-complete and APX-hard (no PTAS unless P = NP). No polynomial-time algorithm achieves approximation ratio below 446213/446212 (about 1.000002) for direct, or below 7258949/7258948 (about 1.0000001) for bottom-up, unless P = NP. These constants are not optimised; the point is that no PTAS exists.
 - Unary alphabet: direct tokenisation is strongly NP-complete (reduction from vertex cover). Corollary: choosing optimal coin denominations for a set of transactions is strongly NP-complete. Unary optimal pair encoding (OPE) is at least weakly NP-complete (reduction from addition chains). Unary bottom-up tokenisation is open.
 - Hardness for an n-ary alphabet implies hardness for every larger alphabet (bytes, Unicode), so results for n = 1 and n = 2 are the strongest.

@@ -100,6 +100,7 @@
       <div class="stat"><div class="num">$\rho \lt 1.000002$</div><div class="lbl">unreachable in poly-time for binary direct</div></div>
       <div class="stat"><div class="num">$\rho \lt 1.0000001$</div><div class="lbl">unreachable in poly-time for binary bottom-up</div></div>
     </div>
+    <p class="rho-note reveal">$\rho$ is the <b>approximation ratio</b>: a tokeniser's compressed length divided by the optimal one, so $\rho = 1$ means optimal.</p>
 
     <details class="box lav fold reveal" style="margin-top:28px">
       <summary class="box-head"><h3>Abstract</h3></summary>
@@ -188,7 +189,7 @@
 <section id="results">
   <div class="wrap">
     <div class="section-head reveal"><span class="kicker pink">Results</span><h2>Hard, all the way down to one symbol</h2></div>
-    <p class="lede reveal">Prior work proved tokenisation NP-complete over <em>unbounded</em> alphabets. Real tokenisers use fixed ones (Unicode, bytes, bits), so we ask the question over $n$-ary alphabets with $|\Sig| = n$.</p>
+    <p class="lede reveal">Prior work proved tokenisation NP-complete over <em>unbounded</em> alphabets. Real tokenisers use fixed alphabets (Unicode, bytes, bits), so we study $n$-ary alphabets with $|\Sig| = n$.</p>
 
     <div class="box pink reveal" style="margin-top:22px">
       <div class="box-head"><h3>Hardness map</h3><span class="tag">objective $\G_\ell$</span></div>
@@ -214,13 +215,13 @@
               <td class="open" data-label="Unary, n = 1"><span class="res">Open</span></td>
               <td class="new" data-label="Binary, n = 2"><span class="badge">NEW</span><span class="res">APX-hard</span>$\rho \lt 1.0000001$ impossible<span class="src"> · Thms. 3–4</span></td>
               <td class="inh" data-label="Bounded, n ≥ 3"><span class="res">APX-hard</span><span class="src">inherited from binary</span></td>
-              <td class="prior" data-label="Unbounded"><span class="res">NP-complete</span><span class="src">Kozma &amp; Voderholzer 2024; Whittington et al. 2025</span></td>
+              <td class="prior" data-label="Unbounded"><span class="res">APX-hard</span><span class="src">Kozma &amp; Voderholzer 2024; NP-complete: Whittington et al. 2025</span></td>
             </tr>
             <tr>
               <th class="rowh">OPE <small>$\tokd[\tk{\mathcal{S}_{\mathbf{m}}}]$</small></th>
               <td class="new" data-label="Unary, n = 1"><span class="badge">NEW</span><span class="res">Weakly NP-complete</span><span class="src">(at least) · Thm. 6</span></td>
               <td class="na hide-sm" colspan="2" data-label="n ≥ 2">not studied here</td>
-              <td class="prior" data-label="Unbounded"><span class="res">Analysed</span><span class="src">Kozma &amp; Voderholzer 2024</span></td>
+              <td class="prior" data-label="Unbounded"><span class="res">APX-hard</span><span class="src">Kozma &amp; Voderholzer 2024</span></td>
             </tr>
           </tbody>
         </table>
@@ -230,6 +231,7 @@
           <span><i style="background:var(--p-sky)"></i>prior work</span>
           <span><i style="background:repeating-linear-gradient(-45deg,#F6F5FA,#F6F5FA 3px,#E4E1EE 3px,#E4E1EE 6px)"></i>open</span>
         </div>
+        <p class="hint" style="margin:12px 0 0">“$\rho \lt c$ impossible” means no polynomial-time algorithm is guaranteed to get within a factor $c$ of the optimal compressed length (unless $\Ptime = \NP$).</p>
       </div>
     </div>
 
@@ -252,7 +254,7 @@
     </div>
 
     <details class="box fold reveal" style="margin-top:26px">
-      <summary class="box-head"><h3>Why small alphabets give the strongest result</h3></summary>
+      <summary class="box-head"><h3>Small alphabets imply larger alphabets</h3></summary>
       <div class="box-body">
         <div class="ladder">
           <div class="rung hard"><div class="n">$n = 1$</div><div class="name">unary</div></div>

@@ -13,7 +13,7 @@ This file summarises the paper for AI agents and tools. For exact statements and
 
 - Tokenisers map character-strings to subword-strings; language models consume the subwords.
 - Downstream model performance is not practical to optimise directly, so tokenisers are chosen by proxy objectives. We focus on compression, which correlates with downstream performance and determines training and inference cost.
-- Prior work (Kozma and Voderholzer, 2024; Whittington et al., 2025; Lim et al., 2025) proved tokenisation NP-complete, but only over unboundedly large alphabets. Practical tokenisers use fixed alphabets: Unicode (about 170,000 characters), bytes (256) or bits (2). We close this gap.
+- Prior work proved tokenisation hard, but only over unboundedly large alphabets: bottom-up tokenisation and OPE (Kozma and Voderholzer, 2024, APX-hard), direct and bottom-up tokenisation (Whittington et al., 2025, NP-complete), and direct tokenisation (Lim et al., 2025). Practical tokenisers use fixed alphabets: Unicode (about 170,000 characters), bytes (256) or bits (2). We close this gap.
 
 ## Setup and notation
 
@@ -26,6 +26,7 @@ The paper colour-codes notation: blue for raw data (characters c in Sigma*), mag
 - Optimal pair encoding (OPE): the merges only define a vocabulary S_m, which is then applied optimally (direct encoding).
 - Compressed length: G_l(tok, D) = sum over c in D of |tok(c)|.
 - Compression reduction: G_r(tok, D) = sum over c in D of (|c| - |tok(c)|). Both rank tokenisers identically, but approximation ratios differ: with 1,000 characters, optimum 100 symbols and a heuristic reaching 200, the ratio is 2 under G_l but 1.125 under G_r. We argue G_l is the natural objective because it is the sequence length a model pays for.
+- Approximation ratio: an algorithm is a rho-approximation if, on every input, its compressed length is at most rho times the optimal compressed length (rho >= 1; rho = 1 is optimal).
 - n-ary tokenisation decision problem: given D over an n-ary alphabet, budget K and target delta, is there a tokeniser (vocabulary or merge sequence of size K) with G_l <= delta? The optimisation problem asks for the minimum.
 - Fact 1: an n-ary instance is also a valid n'-ary instance for n' > n, so hardness propagates to larger alphabets (for unary, this requires strong NP-hardness).
 
@@ -33,9 +34,9 @@ The paper colour-codes notation: blue for raw data (characters c in Sigma*), mag
 
 | Variant | Unary (n = 1) | Binary (n = 2) | Bounded n >= 3 | Unbounded |
 |---|---|---|---|---|
-| Direct | strongly NP-complete (new) | NP-complete, APX-hard, no ratio < 1.000002 (new) | APX-hard (follows) | NP-complete (prior work) |
-| Bottom-up | open | NP-complete, APX-hard, no ratio < 1.0000001 (new) | APX-hard (follows) | NP-complete (prior work) |
-| OPE | at least weakly NP-complete (new) | not studied | not studied | analysed by Kozma and Voderholzer (2024) |
+| Direct | strongly NP-complete (new) | NP-complete, APX-hard, no ratio < 1.000002 (new) | APX-hard (follows) | NP-complete (Whittington et al., 2025; Lim et al., 2025) |
+| Bottom-up | open | NP-complete, APX-hard, no ratio < 1.0000001 (new) | APX-hard (follows) | APX-hard (Kozma and Voderholzer, 2024); NP-complete (Whittington et al., 2025) |
+| OPE | at least weakly NP-complete (new) | not studied | not studied | APX-hard (Kozma and Voderholzer, 2024) |
 
 - Theorem 1: binary direct tokenisation (decision) is NP-complete.
 - Theorem 2: binary direct tokenisation (optimisation) is APX-hard and cannot be approximated in polynomial time with ratio below 446213/446212 > 1.000002, unless P = NP.

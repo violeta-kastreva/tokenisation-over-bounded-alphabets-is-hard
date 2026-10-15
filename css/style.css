@@ -744,3 +744,8 @@ details.subd > summary.subd-head::before { content: "▸"; color: var(--magenta)
 details.subd[open] > summary.subd-head::before { transform: rotate(90deg); }
 details.subd[open] > summary.subd-head { border-bottom: 1.5px solid var(--line-soft); }
 details.subd > summary.subd-head:hover { background: #F1EFF8; }
+
+.rho-note { margin: 12px 2px 0; font-size: .84rem; color: var(--ink-3); max-width: 820px; }
+.rho-note b { font-weight: 600; color: var(--ink-3); }
+.rho-note .katex { color: var(--ink-3); }
+.rho-note .katex [style*="color"] { color: var(--ink-3) !important; }
